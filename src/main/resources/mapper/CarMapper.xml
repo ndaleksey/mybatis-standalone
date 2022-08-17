@@ -3,8 +3,27 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nd.mapper.CarMapper">
-    <select id="findAll" resultType="com.nd.entity.Car">
-        select *
-        from car;
+    <resultMap id="Car" type="com.nd.entity.Car">
+        <id property="id" column="car_id"/>
+        <result property="id" column="car_id"/>
+        <result property="brand" column="car_brand"/>
+        <result property="model" column="car_model"/>
+        <association property="client" javaType="com.nd.entity.Client">
+            <id property="id" column="client_id"/>
+            <result property="id" column="client_id"/>
+            <result property="age" column="client_age"/>
+            <result property="name" column="client_name"/>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="Car">
+        select c.id    as car_id,
+               c.brand as car_brand,
+               c.model as car_model,
+               cl.id   as client_id,
+               cl.name as client_name,
+               cl.age  as client_age
+        from car c
+                 left join client cl on c.client_id = cl.id;
     </select>
 </mapper>
