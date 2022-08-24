@@ -16,18 +16,23 @@
         </association>
     </resultMap>
     <insert id="addCar">
-        insert into car (brand, model, client_id)
-        values (#{car.brand}, #{car.model}, #{car.client.id})
+        with cl as (
+        insert
+        into client (name, age)
+        values (#{car.client.name}, #{car.client.age}) returning id)
+        insert
+        into car (brand, model, client_id)
+        select #{car.brand}, #{car.model}, id
+        from cl;
     </insert>
 
     <select id="findAll" resultMap="Car">
-        select
-            c.id as c_id,
-            c.brand as c_brand,
-            c.model as c_model,
-            cl.id as cl_id,
-            cl.name as cl_name,
-            cl.age as cl_age
+        select c.id    as c_id,
+               c.brand as c_brand,
+               c.model as c_model,
+               cl.id   as cl_id,
+               cl.name as cl_name,
+               cl.age  as cl_age
         from car c
                  left join client cl on c.client_id = cl.id;
     </select>
